@@ -35,10 +35,16 @@ ${KAFKA_HOME}/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic T
 # Question list
 1. Why do Kafka consumers connect to zookeeper, and producers get metadata from brokers?
 
->First of all, zookeeper is needed only for high level consumer. SimpleConsumer does not require zookeeper to work.
+> First of all, zookeeper is needed only for high level consumer. SimpleConsumer does not require zookeeper to work.
+
 > The main reason zookeeper is needed for a high level consumer is to track consumed offsets and handle load balancing.
+
 > Now in more detail.
+
 > Regarding offset tracking, imagine following scenario: you start a consumer, consume 100 messages and shut the consumer down. Next time you start your consumer you'll probably want to resume from your last consumed offset (which is 100), and that means you have to store the maximum consumed offset somewhere. Here's where zookeeper kicks in: it stores offsets for every group/topic/partition. So this way next time you start your consumer it may ask "hey zookeeper, what's the offset I should start consuming from?". Kafka is actually moving towards being able to store offsets not only in zookeeper, but in other storages as well (for now only zookeeper and kafka offset storages are available and i'm not sure kafka storage is fully implemented).
+
 > Regarding load balancing, the amount of messages produced can be quite large to be handled by 1 machine and you'll probably want to add computing power at some point. Lets say you have a topic with 100 partitions and to handle this amount of messages you have 10 machines. There are several questions that arise here actually:
+
 > how should these 10 machines divide partitions between each other? what happens if one of machines die? what happens if you want to add another machine?
+
 > And again, here's where zookeeper kicks in: it tracks all consumers in group and each high level consumer is subscribed for changes in this group. The point is that when a consumer appears or disappears, zookeeper notifies all consumers and triggers rebalance so that they split partitions near-equally (e.g. to balance load). This way it guarantees if one of consumer dies others will continue processing partitions that were owned by this consumer.
