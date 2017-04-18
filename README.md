@@ -35,6 +35,7 @@ ${KAFKA_HOME}/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic T
 # Question list
 1. Why do Kafka consumers connect to zookeeper, and producers get metadata from brokers?
 
+```
 > First of all, zookeeper is needed only for high level consumer. SimpleConsumer does not require zookeeper to work.
 
 > The main reason zookeeper is needed for a high level consumer is to track consumed offsets and handle load balancing.
@@ -48,3 +49,4 @@ ${KAFKA_HOME}/bin/kafka-console-consumer.sh --zookeeper localhost:2181 --topic T
 > how should these 10 machines divide partitions between each other? what happens if one of machines die? what happens if you want to add another machine?
 
 > And again, here's where zookeeper kicks in: it tracks all consumers in group and each high level consumer is subscribed for changes in this group. The point is that when a consumer appears or disappears, zookeeper notifies all consumers and triggers rebalance so that they split partitions near-equally (e.g. to balance load). This way it guarantees if one of consumer dies others will continue processing partitions that were owned by this consumer.
+```
