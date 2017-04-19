@@ -19,6 +19,7 @@ object SimpleProducer extends App {
   props.put("batch.size", String.valueOf(16384))
   props.put("linger.ms", String.valueOf(1))
   props.put("buffer.memory", String.valueOf(33554432))
+  props.put("producer.type", "sync")
   props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer")
   props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer")
 
